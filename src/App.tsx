@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+import {Box, Button} from "@material-ui/core";
+import {useWeb3React} from "@web3-react/core";
+import {useEagerConnect, useInactiveListener} from "./utils/hooks";
+import {injected} from "./utils/connectors";
+import Balance from "./components/balance";
+import BlockNumber from 'components/block_number';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const App = () => {
+
+    const {error, connector, activate, account, chainId} = useWeb3React()
+
+    const [activatingConnector, setActivatingConnector] = useState<any>()
+
+    React.useEffect(() => {
+        if (activatingConnector && activatingConnector === connector) {
+            setActivatingConnector(undefined)
+        }
+    }, [activatingConnector, connector])
+
+    const triedEager = useEagerConnect()
+
+    useInactiveListener(!triedEager || !!activatingConnector)
+
+    const wallet = async () => {
+        setActivatingConnector(injected)
+        await activate(injected)
+    }
+
+    return (
+        <Box>
+            {account ? <>
+                    <div>
+                        <Balance/>
+                    </div>
+
+                    <div>
+                        <BlockNumber/>
+                    </div>
+                </> :
+                <Button onClick={wallet}>链接钱包</Button>
+            }
+        </Box>
+    );
 }
+
 
 export default App;

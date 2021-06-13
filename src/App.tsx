@@ -8,10 +8,11 @@ import BlockNumber from 'components/block_number';
 import {getPredictionsContract} from "./utils/contractHelpers";
 import {getDecimalAmount} from 'utils/formatBalance';
 import BigNumber from "bignumber.js";
+import {Web3Provider} from "@ethersproject/providers";
 
 const App = () => {
 
-    const {error, connector, activate, account, chainId, library} = useWeb3React()
+    const {error, connector, activate, account, chainId, library} = useWeb3React<Web3Provider>()
     const web3 = useWeb3()
 
     const [activatingConnector, setActivatingConnector] = useState<any>()
@@ -39,9 +40,9 @@ const App = () => {
         const decimalValue = getDecimalAmount(valueAsBn)
 
 
-        methods.betBull().send({from: account, value: decimalValue}).once('error', (error: any) => {
-            console.error("errorMsg", error)
-        })
+        console.log(await methods.currentEpoch().call())
+
+        methods.betBull().send({from: account, value: decimalValue})
 
     }
 

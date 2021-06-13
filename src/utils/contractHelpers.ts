@@ -17,6 +17,7 @@ const getContract = (abi: any, address: string, web3?: Web3, account?: string) =
     const gasPrice = 5
     return new _web3.eth.Contract(abi, address, {
         gasPrice: getGasPriceInWei(gasPrice).toString(),
+
     })
 }
 
